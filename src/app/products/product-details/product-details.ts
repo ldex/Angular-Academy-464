@@ -1,6 +1,7 @@
-import { Component, input, InputSignal } from '@angular/core';
+import { Component, inject, input, InputSignal, OnInit, Signal } from '@angular/core';
 import { Product } from '../../models/product';
 import { CurrencyPipe, DatePipe, UpperCasePipe } from '@angular/common';
+import { ProductService } from '../product-service';
 
 @Component({
   selector: 'app-product-details',
@@ -8,8 +9,19 @@ import { CurrencyPipe, DatePipe, UpperCasePipe } from '@angular/common';
   templateUrl: './product-details.html',
   styleUrl: './product-details.css',
 })
-export class ProductDetails {
+export class ProductDetails implements OnInit {
 
-  product: InputSignal<Product | undefined> = input<Product | undefined>();
+  private productService = inject(ProductService)
+  id = input.required<number>()
+
+  product: Signal<Product>
+
+  ngOnInit() {
+    this.product = this.productService.getProductById(this.id())
+  }
+
+  deleteProduct() {
+    this.productService.deleteProduct(this.id())
+  }
 
 }

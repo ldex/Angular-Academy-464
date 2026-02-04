@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Product } from '../models/product';
-import { Observable } from 'rxjs';
+import { delay, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -12,8 +12,20 @@ export class ApiService {
 
   private http = inject(HttpClient)
 
+  loadProduct(id: number): Observable<Product> {
+    return this.http.get<Product>(this.baseUrl + id)
+  }
+
   loadProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(this.baseUrl)
+    return this.http.get<Product[]>(this.baseUrl).pipe(delay(1500)) // pour la démo
+  }
+
+  createProduct(product: Omit<Product, 'id'>): Observable<Product> {
+    return this.http.post<Product>(this.baseUrl, product)
+  }
+
+  deleteProduct(id: number): Observable<void> {
+    return this.http.delete<void>(this.baseUrl + id)
   }
 
 }
